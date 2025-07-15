@@ -40,10 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNÇÕES DA API DA BÍBLIA ---
     
     async function carregarLivros() {
-        try {
-            const response = await fetch(`${BIBLE_API_URL}/books`);
-            const livros = await response.json();
-            
+    try {
+        const response = await fetch(`${BIBLE_API_URL}/books`);
+        if (!response.ok) {
+            throw new Error(`A API da Bíblia falhou com o status: ${response.status}`);
+        }
+        const livros = await response.json();
+
+        if (Array.isArray(livros)) {
             livroSelect.innerHTML = '<option value="">Selecione um Livro</option>';
             livros.forEach(livro => {
                 const option = document.createElement('option');
@@ -53,12 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 livroSelect.appendChild(option);
             });
             livroSelect.disabled = false;
-        } catch (error) {
-            console.error('Erro ao carregar livros:', error);
-            livroSelect.innerHTML = '<option>Erro ao carregar</option>';
+        } else {
+            throw new Error("A resposta da API não foi uma lista de livros válida.");
         }
+    } catch (error) {
+        console.error('Erro detalhado ao carregar livros:', error);
+        livroSelect.innerHTML = '<option>Erro ao carregar</option>';
+        livroSelect.disabled = true;
     }
-
+}
     async function carregarCapitulos(livroAbbrev) {
         versiculoDisplay.innerHTML = '<p><i>O texto do versículo selecionado aparecerá aqui...</i></p>';
         if (!livroAbbrev) {
@@ -89,17 +96,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function carregarVersiculos(traducao, livro, capitulo) {
-        versiculoDisplay.innerHTML = '<p><i>O texto do versículo selecionado aparecerá aqui...</i></p>';
-        if (!livro || !capitulo) {
-             versiculoSelect.innerHTML = '<option>Escolha um capítulo</option>';
-             versiculoSelect.disabled = true;
-             return;
-        }
+    versiculoDisplay.innerHTML = '<p><i>O texto do versículo selecionado aparecerá aqui...</i></p>';
+    if (!livro || !capitulo) {
+         versiculoSelect.innerHTML = '<option>Escolha um capítulo</option>';
+         versiculoSelect.disabled = true;
+         return;
+    }
 
-        try {
-            const response = await fetch(`${BIBLE_API_URL}/verses/${traducao}/${livro}/${capitulo}`);
-            const data = await response.json();
-            
+    try {
+        const response = await fetch(`${BIBLE_API_URL}/verses/${traducao}/${livro}/${capitulo}`);
+        if (!response.ok) {
+            throw new Error(`A API da Bíblia falhou com o status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Verifica se a resposta contém a propriedade 'verses' e se ela é uma lista
+        if (data && Array.isArray(data.verses)) {
             versiculoSelect.innerHTML = '<option value="">Selecione um Versículo</option>';
             data.verses.forEach(v => {
                  const option = document.createElement('option');
@@ -108,10 +120,15 @@ document.addEventListener('DOMContentLoaded', () => {
                  versiculoSelect.appendChild(option);
             });
             versiculoSelect.disabled = false;
-        } catch (error) {
-            console.error('Erro ao carregar versículos:', error);
+        } else {
+            throw new Error("A resposta da API não foi uma lista de versículos válida.");
         }
+    } catch (error) {
+        console.error('Erro detalhado ao carregar versículos:', error);
+        versiculoSelect.innerHTML = '<option>Erro ao carregar</option>';
+        versiculoSelect.disabled = true;
     }
+}
 
     async function mostrarTextoVersiculo(traducao, livro, capitulo, numero) {
         if (!traducao || !livro || !capitulo || !numero) {
