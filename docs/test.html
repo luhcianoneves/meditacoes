@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de API da Bíblia</title>
+</head>
+<body>
+    <h1>Teste de Conexão com a API da Bíblia</h1>
+    <p>Abra o console (F12) para ver os resultados detalhados.</p>
+    <hr>
+    <h2>Resultado do Teste:</h2>
+    <div id="resultado" style="font-family: monospace; background-color: #f0f0f0; padding: 15px; border-radius: 5px;">Verificando...</div>
+
+    <script>
+        const apiUrl = 'https://www.abibliadigital.com.br/api/books';
+        const resultadoDiv = document.getElementById('resultado');
+
+        console.log('Iniciando o teste de fetch para:', apiUrl);
+        resultadoDiv.textContent = `1. Tentando acessar a URL: ${apiUrl}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                console.log('Resposta recebida do servidor:', response);
+                resultadoDiv.innerHTML += `<br>2. Resposta recebida! Status: ${response.status} ${response.statusText}`;
+                if (!response.ok) {
+                    throw new Error(`Erro de Rede: A resposta do servidor não foi 'OK' (Status ${response.status})`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dados recebidos com sucesso:', data);
+                resultadoDiv.innerHTML += `<br>3. Dados processados com sucesso!`;
+                resultadoDiv.innerHTML += `<br><strong style="color: green;">SUCESSO!</strong> A API retornou ${data.length} livros. O primeiro é: ${data[0].name}.`;
+            })
+            .catch(error => {
+                console.error('Ocorreu um erro no fetch:', error);
+                resultadoDiv.innerHTML += `<br><strong style="color: red;">FALHA NO TESTE!</strong><br>Erro: ${error.message}`;
+            });
+    </script>
+</body>
+</html>
