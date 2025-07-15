@@ -2,13 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- COLE AQUI O OBJETO firebaseConfig DO PASSO 1 ---
     const firebaseConfig = {
-        apiKey: "SUA_API_KEY",
-        authDomain: "SEU_PROJETO.firebaseapp.com",
-        projectId: "SEU_PROJETO",
-        storageBucket: "SEU_PROJETO.appspot.com",
-        messagingSenderId: "SEU_SENDER_ID",
-        appId: "SEU_APP_ID"
-    };
+        apiKey: "AIzaSyAu_Egg3ovpuxkGdILmUgh22Y7KcthpLyI",
+  authDomain: "meditacoes-biblicas.firebaseapp.com",
+  projectId: "meditacoes-biblicas",
+  storageBucket: "meditacoes-biblicas.firebasestorage.app",
+  messagingSenderId: "790350684857",
+  appId: "1:790350684857:web:2f4ff5b0c97f14f6767168"
+};
+
     // ---------------------------------------------------
 
     // Inicializa o Firebase
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tituloInput = document.getElementById('titulo');
     const btnSalvar = document.getElementById('btn-salvar');
 
-    const BIBLE_API_URL = 'https://www.abibliadigital.com.br/api';
+    const BIBLE_API_URL = 'https://cors.eu.org/https://www.abibliadigital.com.br/api';
 
     // Inicializa o Editor de Texto TinyMCE
     tinymce.init({
