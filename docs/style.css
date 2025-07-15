@@ -1,0 +1,254 @@
+/* --- Váriaveis de Cores e Fontes --- */
+:root {
+    --cor-primaria: #2c3e50;
+    --cor-secundaria: #3498db;
+    --cor-fundo: #ecf0f1;
+    --cor-texto: #34495e;
+    --cor-branca: #ffffff;
+    --cor-sombra: rgba(0,0,0,0.1);
+    --fonte-titulo: 'Playfair Display', serif;
+    --fonte-corpo: 'Montserrat', sans-serif;
+}
+
+/* --- Reset e Configurações Globais --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--fonte-corpo);
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    line-height: 1.6;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* --- Header e Navegação --- */
+header {
+    background-color: var(--cor-primaria);
+    color: var(--cor-branca);
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px var(--cor-sombra);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+nav h1 {
+    font-family: var(--fonte-titulo);
+    font-size: 1.8rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li a {
+    color: var(--cor-branca);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover, nav ul li a.active {
+    background-color: var(--cor-secundaria);
+}
+
+/* --- Conteúdo Principal --- */
+main {
+    padding: 2rem 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: var(--cor-branca);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--cor-sombra);
+}
+
+h2 {
+    font-family: var(--fonte-titulo);
+    color: var(--cor-primaria);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--cor-secundaria);
+    padding-bottom: 0.5rem;
+}
+
+/* --- Grid de Formulários --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+input[type="text"], select {
+    padding: 0.8rem;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: var(--fonte-corpo);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--cor-secundaria);
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+select:disabled {
+    background-color: #ecf0f1;
+    cursor: not-allowed;
+}
+
+/* --- Botões --- */
+button {
+    background-color: var(--cor-secundaria);
+    color: var(--cor-branca);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+#btn-salvar {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+}
+
+/* --- Display do Versículo --- */
+.versiculo-display {
+    background-color: #f8f9fa;
+    border-left: 4px solid var(--cor-secundaria);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 5px;
+}
+
+.versiculo-display p {
+    font-style: italic;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+/* --- Editor de Texto TinyMCE --- */
+.tox-tinymce {
+    border-radius: 5px;
+}
+
+/* --- Seção de Mensagens Salvas --- */
+#lista-mensagens {
+    margin-top: 2rem;
+}
+
+.card-mensagem {
+    background: var(--cor-branca);
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 5px var(--cor-sombra);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.card-mensagem:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.card-mensagem h3 {
+    font-family: var(--fonte-titulo);
+    color: var(--cor-primaria);
+}
+
+.card-mensagem .info-versiculo {
+    font-size: 0.9rem;
+    color: var(--cor-secundaria);
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.card-mensagem .trecho {
+    margin: 1rem 0;
+}
+
+.card-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.card-actions .btn-export {
+    background-color: var(--cor-primaria);
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    padding: 2rem;
+    background-color: #2c3e50;
+    color: #bdc3c7;
+    margin-top: 2rem;
+}
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
