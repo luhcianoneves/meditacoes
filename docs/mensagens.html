@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Meditações - Mensagens Salvas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <h1>Minhas Meditações</h1>
+            <ul>
+                <li><a href="index.html">Escrever</a></li>
+                <li><a href="mensagens.html" class="active">Mensagens Salvas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="container">
+            <h2>Filtre suas Meditações</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="filtro-tipo">Tipo</label>
+                    <select id="filtro-tipo">
+                        <option value="Todos">Todos</option>
+                        <option value="Bíblia">Bíblia</option>
+                        <option value="Autoral">Autoral</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-traducao">Tradução</label>
+                    <select id="filtro-traducao">
+                         <option value="Todos">Todas</option>
+                         <option value="acf">ACF</option>
+                         <option value="nvi">NVI</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-livro">Livro</label>
+                    <select id="filtro-livro">
+                        <option value="Todos">Todos</option>
+                        </select>
+                </div>
+            </div>
+            <button id="btn-filtrar">Filtrar</button>
+            <hr>
+            
+            <div id="lista-mensagens">
+                <p class="loading-text">Carregando mensagens...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 - Desenvolvido com criatividade e tecnologia.</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script src="mensagens.js"></script>
+</body>
+</html>
