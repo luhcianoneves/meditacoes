@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FIM DO BLOCO FIREBASE ---
 
     // --- CONFIGURAÇÃO DA NOVA API DA BÍBLIA ---
-    const BIBLE_API_KEY = '94c9d3bc16c6ff4b99907ed39ccef656'; // <-- IMPORTANTE!
+    const BIBLE_API_KEY = 'cf46fab527178ac388cc2fc0c9286889'; // <-- IMPORTANTE!
     const BIBLE_API_URL = 'https://api.scripture.api.bible/v1';
     const BIBLE_VERSION_ACF = '66c8d76b3220455c-01'; // Almeida Corrigida Fiel
     const BIBLE_VERSION_NVI = 'a73be5c2729e744b-01'; // Nova Versão Internacional
