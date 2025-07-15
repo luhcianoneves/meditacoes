@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Usamos caminhos relativos para funcionar no GitHub Pages
             const [responseACF, responseNVI] = await Promise.all([
-                fetch('./acf.json'),
-                fetch('./nvi.json')
+                fetch('./biblia/acf.json'),
+                fetch('./biblia/nvi.json')
             ]);
 
             if (!responseACF.ok || !responseNVI.ok) {
