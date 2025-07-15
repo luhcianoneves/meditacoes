@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Meditações - Escrever</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <h1>Minhas Meditações</h1>
+            <ul>
+                <li><a href="index.html" class="active">Escrever</a></li>
+                <li><a href="mensagens.html">Mensagens Salvas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="container" id="criacao-meditacao">
+            <h2>Crie sua Meditação</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="tipo">Tipo</label>
+                    <select id="tipo">
+                        <option value="Bíblia" selected>Bíblia</option>
+                        <option value="Autoral">Autoral</option>
+                    </select>
+                </div>
+                <div class="form-group" id="group-traducao">
+                    <label for="traducao">Tradução</label>
+                    <select id="traducao">
+                        <option value="acf">Almeida Corrigida Fiel (ACF)</option>
+                        <option value="nvi">Nova Versão Internacional (NVI)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="group-livro">
+                    <label for="livro">Livro</label>
+                    <select id="livro" disabled>
+                        <option>Carregando...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="group-capitulo">
+                    <label for="capitulo">Capítulo</label>
+                    <select id="capitulo" disabled>
+                        <option>Escolha um livro</option>
+                    </select>
+                </div>
+                <div class="form-group" id="group-versiculos">
+                     <label for="versiculos">Versículo(s)</label>
+                    <select id="versiculos" disabled>
+                         <option>Escolha um capítulo</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="texto-versiculo" class="versiculo-display">
+                <p><i>O texto do versículo selecionado aparecerá aqui...</i></p>
+            </div>
+
+            <div class="form-group">
+                <label for="titulo">Título (até 300 caracteres)</label>
+                <input type="text" id="titulo" maxlength="300" placeholder="Digite o título da sua meditação">
+            </div>
+            <div class="form-group">
+                <label for="mensagem">Mensagem (até 5000 caracteres)</label>
+                <textarea id="mensagem"></textarea>
+            </div>
+
+            <button id="btn-salvar">Salvar Meditação</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 - Desenvolvido com criatividade e tecnologia.</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
