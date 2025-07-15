@@ -1,16 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- COLE AQUI O OBJETO firebaseConfig DO PASSO 1 ---
+    // --- COLE AQUI O OBJETO firebaseConfig DO PASSO 1 (do início do projeto) ---
     const firebaseConfig = {
-        apiKey: "AIzaSyAu_Egg3ovpuxkGdILmUgh22Y7KcthpLyI",
+       apiKey: "AIzaSyAu_Egg3ovpuxkGdILmUgh22Y7KcthpLyI",
   authDomain: "meditacoes-biblicas.firebaseapp.com",
   projectId: "meditacoes-biblicas",
   storageBucket: "meditacoes-biblicas.firebasestorage.app",
   messagingSenderId: "790350684857",
   appId: "1:790350684857:web:2f4ff5b0c97f14f6767168"
-};
+    };
+    // --- FIM DO BLOCO FIREBASE ---
 
-    // ---------------------------------------------------
+    // --- CONFIGURAÇÃO DA NOVA API DA BÍBLIA ---
+    const BIBLE_API_KEY = '94c9d3bc16c6ff4b99907ed39ccef656'; // <-- IMPORTANTE!
+    const BIBLE_API_URL = 'https://api.scripture.api.bible/v1';
+    const BIBLE_VERSION_ACF = '66c8d76b3220455c-01'; // Almeida Corrigida Fiel
+    const BIBLE_VERSION_NVI = 'a73be5c2729e744b-01'; // Nova Versão Internacional
+    // --- FIM DA CONFIGURAÇÃO ---
+
 
     // Inicializa o Firebase
     firebase.initializeApp(firebaseConfig);
@@ -25,9 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const versiculoDisplay = document.getElementById('texto-versiculo');
     const tituloInput = document.getElementById('titulo');
     const btnSalvar = document.getElementById('btn-salvar');
-
-    const BIBLE_API_URL = 'https://cors.eu.org/https://www.abibliadigital.com.br/api';
-
+    
     // Inicializa o Editor de Texto TinyMCE
     tinymce.init({
         selector: '#mensagem',
@@ -37,58 +42,54 @@ document.addEventListener('DOMContentLoaded', () => {
         height: 400,
         max_chars: 5000
     });
-    
-    // --- FUNÇÕES DA API DA BÍBLIA ---
+
+    const apiHeaders = { 'api-key': BIBLE_API_KEY };
+
+    async function fetchData(endpoint) {
+        const response = await fetch(`${BIBLE_API_URL}${endpoint}`, { headers: apiHeaders });
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        const json = await response.json();
+        return json.data;
+    }
     
     async function carregarLivros() {
-    try {
-        const response = await fetch(`${BIBLE_API_URL}/books`);
-        if (!response.ok) {
-            throw new Error(`A API da Bíblia falhou com o status: ${response.status}`);
-        }
-        const livros = await response.json();
-
-        if (Array.isArray(livros)) {
+        const bibleId = traducaoSelect.value === 'acf' ? BIBLE_VERSION_ACF : BIBLE_VERSION_NVI;
+        livroSelect.innerHTML = '<option>Carregando...</option>';
+        livroSelect.disabled = true;
+        
+        try {
+            const livros = await fetchData(`/bibles/${bibleId}/books`);
             livroSelect.innerHTML = '<option value="">Selecione um Livro</option>';
             livros.forEach(livro => {
                 const option = document.createElement('option');
-                option.value = livro.abbrev.pt;
-                option.textContent = livro.name;
-                option.dataset.testament = livro.testament;
+                option.value = livro.id; // Ex: 'GEN'
+                option.textContent = livro.name; // Ex: 'Gênesis'
                 livroSelect.appendChild(option);
             });
             livroSelect.disabled = false;
-        } else {
-            throw new Error("A resposta da API não foi uma lista de livros válida.");
+        } catch (error) {
+            console.error('Erro ao carregar livros:', error);
+            livroSelect.innerHTML = '<option>Erro ao carregar</option>';
         }
-    } catch (error) {
-        console.error('Erro detalhado ao carregar livros:', error);
-        livroSelect.innerHTML = '<option>Erro ao carregar</option>';
-        livroSelect.disabled = true;
     }
-}
-    async function carregarCapitulos(livroAbbrev) {
-        versiculoDisplay.innerHTML = '<p><i>O texto do versículo selecionado aparecerá aqui...</i></p>';
-        if (!livroAbbrev) {
-            capituloSelect.innerHTML = '<option>Escolha um livro</option>';
-            capituloSelect.disabled = true;
-            versiculoSelect.innerHTML = '<option>Escolha um capítulo</option>';
-            versiculoSelect.disabled = true;
-            return;
-        }
-        
-        try {
-            const response = await fetch(`${BIBLE_API_URL}/books/${livroAbbrev}`);
-            const livroInfo = await response.json();
-            const totalCapitulos = livroInfo.chapters;
 
+    async function carregarCapitulos(bookId) {
+        if (!bookId) { /* ...código para limpar os campos ... */ return; }
+        const bibleId = traducaoSelect.value === 'acf' ? BIBLE_VERSION_ACF : BIBLE_VERSION_NVI;
+        capituloSelect.innerHTML = '<option>Carregando...</option>';
+        capituloSelect.disabled = true;
+
+        try {
+            const capitulos = await fetchData(`/bibles/${bibleId}/books/${bookId}/chapters`);
             capituloSelect.innerHTML = '<option value="">Selecione um Capítulo</option>';
-            for (let i = 1; i <= totalCapitulos; i++) {
+            capitulos.forEach(capitulo => {
                 const option = document.createElement('option');
-                option.value = i;
-                option.textContent = `Capítulo ${i}`;
+                option.value = capitulo.id; // Ex: 'GEN.1'
+                option.textContent = capitulo.reference; // Ex: 'Gênesis 1'
                 capituloSelect.appendChild(option);
-            }
+            });
             capituloSelect.disabled = false;
         } catch (error) {
             console.error('Erro ao carregar capítulos:', error);
@@ -96,58 +97,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    async function carregarVersiculos(traducao, livro, capitulo) {
-    versiculoDisplay.innerHTML = '<p><i>O texto do versículo selecionado aparecerá aqui...</i></p>';
-    if (!livro || !capitulo) {
-         versiculoSelect.innerHTML = '<option>Escolha um capítulo</option>';
-         versiculoSelect.disabled = true;
-         return;
-    }
-
-    try {
-        const response = await fetch(`${BIBLE_API_URL}/verses/${traducao}/${livro}/${capitulo}`);
-        if (!response.ok) {
-            throw new Error(`A API da Bíblia falhou com o status: ${response.status}`);
-        }
-        const data = await response.json();
-        
-        // Verifica se a resposta contém a propriedade 'verses' e se ela é uma lista
-        if (data && Array.isArray(data.verses)) {
-            versiculoSelect.innerHTML = '<option value="">Selecione um Versículo</option>';
-            data.verses.forEach(v => {
-                 const option = document.createElement('option');
-                 option.value = v.number;
-                 option.textContent = `Versículo ${v.number}`;
-                 versiculoSelect.appendChild(option);
-            });
-            versiculoSelect.disabled = false;
-        } else {
-            throw new Error("A resposta da API não foi uma lista de versículos válida.");
-        }
-    } catch (error) {
-        console.error('Erro detalhado ao carregar versículos:', error);
-        versiculoSelect.innerHTML = '<option>Erro ao carregar</option>';
+    async function carregarVersiculos(chapterId) {
+        if (!chapterId) { /* ... */ return; }
+        const bibleId = traducaoSelect.value === 'acf' ? BIBLE_VERSION_ACF : BIBLE_VERSION_NVI;
+        versiculoSelect.innerHTML = '<option>Carregando...</option>';
         versiculoSelect.disabled = true;
-    }
-}
 
-    async function mostrarTextoVersiculo(traducao, livro, capitulo, numero) {
-        if (!traducao || !livro || !capitulo || !numero) {
-            versiculoDisplay.innerHTML = '<p><i>O texto do versículo selecionado aparecerá aqui...</i></p>';
-            return;
-        }
         try {
-            const response = await fetch(`${BIBLE_API_URL}/verses/${traducao}/${livro}/${capitulo}/${numero}`);
-            const data = await response.json();
-            versiculoDisplay.innerHTML = `<p>"${data.text}"</p><p><strong> - ${data.book.name} ${data.chapter}:${data.number} (${traducao.toUpperCase()})</strong></p>`;
+            // A API retorna o conteúdo completo do capítulo
+            const chapterData = await fetchData(`/bibles/${bibleId}/chapters/${chapterId}?content-type=text`);
+            const verseCount = chapterData.verseCount;
+            
+            versiculoSelect.innerHTML = '<option value="">Selecione um Versículo</option>';
+            for(let i = 1; i <= verseCount; i++) {
+                const option = document.createElement('option');
+                const verseId = `${chapterId}.${i}`;
+                option.value = verseId; // Ex: 'GEN.1.1'
+                option.textContent = `Versículo ${i}`;
+                versiculoSelect.appendChild(option);
+            }
+            versiculoSelect.disabled = false;
+        } catch (error) {
+            console.error('Erro ao carregar versículos:', error);
+            versiculoSelect.innerHTML = '<option>Erro ao carregar</option>';
+        }
+    }
+
+    async function mostrarTextoVersiculo(verseId) {
+        if (!verseId) { /* ... */ return; }
+        versiculoDisplay.innerHTML = '<p><i>Carregando texto...</i></p>';
+        const bibleId = traducaoSelect.value === 'acf' ? BIBLE_VERSION_ACF : BIBLE_VERSION_NVI;
+        
+        try {
+            // Esta API busca um versículo específico e retorna o HTML dele
+            const verseData = await fetchData(`/bibles/${bibleId}/verses/${verseId}?content-type=html`);
+            versiculoDisplay.innerHTML = `${verseData.content}<p><strong> - ${verseData.reference} (${traducaoSelect.options[traducaoSelect.selectedIndex].text})</strong></p>`;
         } catch(error) {
             console.error('Erro ao buscar texto do versículo:', error);
-            versiculoDisplay.innerHTML = '<p><i>Não foi possível carregar o texto do versículo.</i></p>';
+            versiculoDisplay.innerHTML = '<p><i>Não foi possível carregar o texto.</i></p>';
         }
     }
-
-    // --- EVENT LISTENERS ---
-
+    
+    // --- EVENT LISTENERS (semelhantes ao anterior, mas adaptados) ---
     tipoSelect.addEventListener('change', (e) => {
         const isBiblia = e.target.value === 'Bíblia';
         document.getElementById('group-traducao').style.display = isBiblia ? 'flex' : 'none';
@@ -156,25 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('group-versiculos').style.display = isBiblia ? 'flex' : 'none';
         document.getElementById('texto-versiculo').style.display = isBiblia ? 'block' : 'none';
     });
-
-    livroSelect.addEventListener('change', () => {
-        carregarCapitulos(livroSelect.value);
-    });
-
-    capituloSelect.addEventListener('change', () => {
-        carregarVersiculos(traducaoSelect.value, livroSelect.value, capituloSelect.value);
-    });
     
-    traducaoSelect.addEventListener('change', () => {
-       carregarVersiculos(traducaoSelect.value, livroSelect.value, capituloSelect.value);
-    });
+    traducaoSelect.addEventListener('change', carregarLivros);
+    livroSelect.addEventListener('change', () => carregarCapitulos(livroSelect.value));
+    capituloSelect.addEventListener('change', () => carregarVersiculos(capituloSelect.value));
+    versiculoSelect.addEventListener('change', () => mostrarTextoVersiculo(versiculoSelect.value));
 
-    versiculoSelect.addEventListener('change', () => {
-        mostrarTextoVersiculo(traducaoSelect.value, livroSelect.value, capituloSelect.value, versiculoSelect.value);
-    });
-
-    // --- SALVAR NO FIREBASE ---
-
+    // --- FUNÇÃO DE SALVAR (precisa de uma pequena adaptação) ---
     btnSalvar.addEventListener('click', async () => {
         const tipo = tipoSelect.value;
         const titulo = tituloInput.value.trim();
@@ -196,26 +175,21 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (tipo === 'Bíblia') {
-            const livroOption = livroSelect.options[livroSelect.selectedIndex];
+            const verseData = await fetchData(`/bibles/${(traducaoSelect.value === 'acf' ? BIBLE_VERSION_ACF : BIBLE_VERSION_NVI)}/verses/${versiculoSelect.value}`);
             dadosParaSalvar.traducao = traducaoSelect.value;
-            dadosParaSalvar.livroAbrev = livroSelect.value;
-            dadosParaSalvar.livroNome = livroOption ? livroOption.textContent : '';
-            dadosParaSalvar.capitulo = capituloSelect.value;
-            dadosParaSalvar.versiculo = versiculoSelect.value;
+            dadosParaSalvar.livroNome = verseData.reference.split(' ')[0];
+            dadosParaSalvar.referenciaCompleta = verseData.reference;
             dadosParaSalvar.textoVersiculo = versiculoDisplay.querySelector('p:first-child')?.textContent || '';
         }
 
         try {
             await db.collection('meditacoes').add(dadosParaSalvar);
             alert('Meditação salva com sucesso!');
-            // Limpar campos
             tituloInput.value = '';
             tinymce.get('mensagem').setContent('');
-            versiculoDisplay.innerHTML = '<p><i>O texto do versículo selecionado aparecerá aqui...</i></p>';
-            // Resetar selects? (opcional)
         } catch (error) {
             console.error('Erro ao salvar no Firebase: ', error);
-            alert('Ocorreu um erro ao salvar. Tente novamente.');
+            alert('Ocorreu um erro ao salvar.');
         } finally {
             btnSalvar.textContent = 'Salvar Meditação';
             btnSalvar.disabled = false;
